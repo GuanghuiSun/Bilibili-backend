@@ -1,4 +1,0 @@
-# profile
-spring:
-  profiles:
-    active: test
