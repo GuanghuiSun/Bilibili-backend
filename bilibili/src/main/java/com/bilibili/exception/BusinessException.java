@@ -1,5 +1,7 @@
 package com.bilibili.exception;
 
+import com.bilibili.base.ErrorCode;
+
 import java.io.Serializable;
 
 /**
@@ -19,6 +21,20 @@ public class BusinessException extends RuntimeException implements Serializable 
         super(message);
         this.code = code;
         this.description = description;
+    }
+
+    public BusinessException(String message, String code) {
+        super(message);
+        this.code = code;
+        this.description = message;
+    }
+
+    public BusinessException(ErrorCode errorCode) {
+        this(errorCode.getMessage(), errorCode.getCode(), errorCode.getDescription());
+    }
+
+    public BusinessException(ErrorCode errorCode, String description) {
+        this(errorCode.getMessage(), errorCode.getCode(), description);
     }
 
     public String getCode() {

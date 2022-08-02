@@ -1,5 +1,7 @@
 package com.bilibili.base;
 
+import static com.bilibili.constant.MessageConstant.*;
+
 /**
  * 响应消息工具类
  *
@@ -15,7 +17,11 @@ public class ResultUtils {
      * @return 响应体
      */
     public static <T> BaseResponse<T> success(T data, String message) {
-        return new BaseResponse<>("200", data, message, message);
+        return new BaseResponse<>(SUCCESS_RESPONSE_CODE, data, message, message);
+    }
+
+    public static <T> BaseResponse<T> success(T data) {
+        return new BaseResponse<>(SUCCESS_RESPONSE_CODE, data, SUCCESS);
     }
 
     public static <T> BaseResponse<T> success(String code, T data, String message) {
