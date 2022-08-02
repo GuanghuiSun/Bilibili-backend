@@ -5,20 +5,33 @@
 <mapper namespace="com.bilibili.mapper.UserMapper">
 
     <resultMap id="BaseResultMap" type="com.bilibili.model.domain.User">
-            <id property="id" column="id" jdbcType="BIGINT"/>
-            <result property="phone" column="phone" jdbcType="VARCHAR"/>
-            <result property="email" column="email" jdbcType="VARCHAR"/>
-            <result property="userPassword" column="userPassword" jdbcType="VARCHAR"/>
-            <result property="salt" column="salt" jdbcType="VARCHAR"/>
-            <result property="createTime" column="createTime" jdbcType="TIMESTAMP"/>
-            <result property="updateTime" column="updateTime" jdbcType="TIMESTAMP"/>
-            <result property="isValid" column="isValid" jdbcType="TINYINT"/>
-            <result property="isDeleted" column="isDeleted" jdbcType="TINYINT"/>
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="phone" column="phone" jdbcType="VARCHAR"/>
+        <result property="email" column="email" jdbcType="VARCHAR"/>
+        <result property="userPassword" column="userPassword" jdbcType="VARCHAR"/>
+        <result property="salt" column="salt" jdbcType="VARCHAR"/>
+        <result property="createTime" column="createTime" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="updateTime" jdbcType="TIMESTAMP"/>
+        <result property="isValid" column="isValid" jdbcType="TINYINT"/>
+        <result property="isDeleted" column="isDeleted" jdbcType="TINYINT"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,phone,email,
+        id
+        ,phone,email,
         userPassword,salt,createTime,
         updateTime,isValid,isDeleted
     </sql>
+    <update id="updateUser" parameterType="com.bilibili.model.domain.User">
+        update t_user
+        set
+        <if test="phone != null and phone != ''">
+            phone = #{phone},
+        </if>
+        <if test="email != null and email != ''">
+            email = #{email},
+        </if>
+        updateTime = #{updateTime}
+        where id = #{id}
+    </update>
 </mapper>

@@ -22,10 +22,9 @@ public interface UserService extends IService<User> {
      *
      * @param phone         手机号
      * @param password      密码
-     * @param checkPassword 确认密码
-     * @return
+     * @return userId
      */
-    Long register(String phone, String password, String checkPassword);
+    Long register(String phone, String password);
 
 
     /**
@@ -33,7 +32,20 @@ public interface UserService extends IService<User> {
      *
      * @param phone    手机号
      * @param password 密码
-     * @return
+     * @return token
      */
-    String login(String phone, String password);
+    String login(String phone, String password) throws Exception;
+
+    /**
+     * 根据userId查询user
+     * @param userId 用户Id
+     * @return user
+     */
+    User getByUserId(Long userId);
+
+    /**
+     * 更新用户信息
+     * @param user 用户
+     */
+    void updateUser(User user);
 }

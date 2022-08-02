@@ -5,16 +5,14 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
- * 用户注册请求体
+ * 用户注册登录请求体
  *
  * @author sgh
  * @date 2022-8-2
  */
 @Data
-public class UserRegisterRequest implements Serializable {
-    private static final long serialVersionUID = -205920810522402408L;
+public class UserRegisterAndLoginRequest implements Serializable {
+    private static final long serialVersionUID = -4574208574150848943L;
     private String phone;
     private String password;
-    private String checkPassword;
-
 }

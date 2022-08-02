@@ -74,6 +74,12 @@ public class User implements Serializable {
     @TableField(value = "isDeleted")
     private Byte isDeleted;
 
+    /**
+     * 用户详细信息
+     */
+    @TableField(exist = false)
+    private UserInfo userInfo;
+
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 

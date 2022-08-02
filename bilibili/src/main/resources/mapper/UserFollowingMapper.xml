@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bilibili.mapper.UserFollowingMapper">
+
+    <resultMap id="BaseResultMap" type="com.bilibili.model.domain.UserFollowing">
+            <result property="id" column="id" jdbcType="BIGINT"/>
+            <result property="userId" column="userId" jdbcType="BIGINT"/>
+            <result property="followingId" column="followingId" jdbcType="BIGINT"/>
+            <result property="groupId" column="groupId" jdbcType="INTEGER"/>
+            <result property="createTime" column="createTime" jdbcType="TIMESTAMP"/>
+            <result property="isUnfollowed" column="isUnfollowed" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,userId,followingId,
+        groupId,createTime,isUnfollowed
+    </sql>
+</mapper>

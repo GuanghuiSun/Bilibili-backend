@@ -36,7 +36,6 @@ public class ResultUtils {
         return new BaseResponse<>(code, data, message);
     }
 
-
     public static <T> BaseResponse<T> error(String code, String message, String description) {
         return new BaseResponse<>(code, null, message, description);
     }

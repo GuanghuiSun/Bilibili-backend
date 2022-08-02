@@ -5,22 +5,44 @@
 <mapper namespace="com.bilibili.mapper.UserInfoMapper">
 
     <resultMap id="BaseResultMap" type="com.bilibili.model.domain.UserInfo">
-            <id property="id" column="id" jdbcType="BIGINT"/>
-            <result property="userId" column="userId" jdbcType="BIGINT"/>
-            <result property="nick" column="nick" jdbcType="VARCHAR"/>
-            <result property="avatar" column="avatar" jdbcType="VARCHAR"/>
-            <result property="sign" column="sign" jdbcType="VARCHAR"/>
-            <result property="gender" column="gender" jdbcType="TINYINT"/>
-            <result property="birth" column="birth" jdbcType="VARCHAR"/>
-            <result property="createTime" column="createTime" jdbcType="TIMESTAMP"/>
-            <result property="updateTime" column="updateTime" jdbcType="TIMESTAMP"/>
-            <result property="isDeleted" column="isDeleted" jdbcType="TINYINT"/>
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="userId" column="userId" jdbcType="BIGINT"/>
+        <result property="nick" column="nick" jdbcType="VARCHAR"/>
+        <result property="avatar" column="avatar" jdbcType="VARCHAR"/>
+        <result property="sign" column="sign" jdbcType="VARCHAR"/>
+        <result property="gender" column="gender" jdbcType="TINYINT"/>
+        <result property="birth" column="birth" jdbcType="VARCHAR"/>
+        <result property="createTime" column="createTime" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="updateTime" jdbcType="TIMESTAMP"/>
+        <result property="isDeleted" column="isDeleted" jdbcType="TINYINT"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,userId,nick,
+        id
+        ,userId,nick,
         avatar,sign,gender,
         birth,createTime,updateTime,
         isDeleted
     </sql>
+    <update id="updateUserInfo" parameterType="com.bilibili.model.domain.UserInfo">
+        update t_user_info
+        set
+        <if test="nick != null and nick != ''">
+            nick = #{nick},
+        </if>
+        <if test="avatar != null and avatar != ''">
+            avatar = #{avatar},
+        </if>
+        <if test="sign != null and sign != ''">
+            sign = #{sign},
+        </if>
+        <if test="birth != null and birth != ''">
+            birth = #{birth},
+        </if>
+        <if test="gender != null">
+            gender = #{gender}
+        </if>
+        updateTime = #{updateTime}
+        where userId = #{userId}
+    </update>
 </mapper>

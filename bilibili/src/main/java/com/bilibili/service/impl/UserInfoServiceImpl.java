@@ -6,8 +6,11 @@ import com.bilibili.service.UserInfoService;
 import com.bilibili.mapper.UserInfoMapper;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
+import java.util.Date;
+
 /**
-* @author huawei
+* @author sgh
 * @description 针对表【t_user_info(用户信息表)】的数据库操作Service实现
 * @createDate 2022-08-01 23:28:35
 */
@@ -15,6 +18,14 @@ import org.springframework.stereotype.Service;
 public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo>
     implements UserInfoService{
 
+    @Resource
+    private UserInfoMapper userInfoMapper;
+
+    @Override
+    public void updateUserInfo(UserInfo userInfo) {
+        userInfo.setUpdateTime(new Date());
+        userInfoMapper.updateUserInfo(userInfo);
+    }
 }
 
 

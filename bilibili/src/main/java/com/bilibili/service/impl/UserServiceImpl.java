@@ -11,15 +11,18 @@ import com.bilibili.service.UserService;
 import com.bilibili.mapper.UserMapper;
 import com.bilibili.utils.MD5Util;
 import com.bilibili.utils.RSAUtil;
+import com.bilibili.utils.TokenUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.regex.Pattern;
 
 import static com.bilibili.base.ErrorCode.PUT_SERVICE_ERROR;
+import static com.bilibili.base.ErrorCode.REQUEST_SERVICE_ERROR;
 import static com.bilibili.constant.MessageConstant.*;
 import static com.bilibili.constant.user.UserConstant.*;
 
@@ -48,38 +51,34 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     }
 
     @Override
-    public Long register(String phone, String password, String checkPassword) {
+    public Long register(String phone, String password) {
         //校验参数是否为空
-        if(StringUtils.isAnyBlank(phone,password,checkPassword)) {
-            throw new BusinessException(PARAM_ERROR_CODE,PARAM_EMPTY_ERROR);
+        if (StringUtils.isAnyBlank(phone, password)) {
+            throw new BusinessException(PARAM_ERROR_CODE, PARAM_EMPTY_ERROR);
         }
         //检查手机号格式
         boolean matches = Pattern.matches("^1[3-9]\\d{9}$", phone);
-        if(!matches){
-            throw new BusinessException(PARAM_ERROR_CODE,PHONE_PATTERN_ERROR);
-        }
-        //检查密码格式
-        if(password.length() < 6) {
-            throw new BusinessException(PARAM_ERROR_CODE,PASSWORD_PATTERN_ERROR);
-        }
-        //检查两次密码是否一致
-        if (!password.equals(checkPassword)) {
-            throw new BusinessException(PARAM_ERROR_CODE, CHECK_REGISTER_FAIL);
+        if (!matches) {
+            throw new BusinessException(PARAM_ERROR_CODE, PHONE_PATTERN_ERROR);
         }
         //检查手机号是否已被注册
-        checkPhone(phone);
+        User dbUser = checkPhone(phone);
+        if (dbUser != null) {
+            throw new BusinessException(PUT_SERVICE_ERROR, PHONE_EXIST_ERROR);
+        }
         //密码加密存储
-            //获取当前时间戳
+        //获取当前时间戳
         LocalDateTime now = LocalDateTime.now();
-            //作为盐值
+        //作为盐值
         String salt = String.valueOf(now);
+        //对传进来的密码解密
         String rawPassword;
         try {
             rawPassword = RSAUtil.decrypt(password);
-        }catch (Exception e) {
+        } catch (Exception e) {
             throw new BusinessException(PARAM_ERROR_CODE, RSA_DECODE_FAIL);
         }
-        //对加密密码MD5加密存储
+        //对解密后的密码MD5加密存储
         String md5Password = MD5Util.sign(rawPassword, salt, "UTF-8");
         //保存用户基本信息
         User user = new User();
@@ -97,20 +96,65 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         userInfoService.save(userInfo);
         return user.getId();
     }
-    
-    public Boolean checkPhone(String phone) {
+
+    /**
+     * 根据手机号获取用户
+     *
+     * @param phone 手机号
+     * @return 结果
+     */
+    public User checkPhone(String phone) {
         LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(User::getPhone,phone);
-        long count = this.count(wrapper);
-        if(count > 0) {
-            throw new BusinessException(PUT_SERVICE_ERROR,PHONE_EXIST_ERROR);
-        }
-        return Boolean.TRUE;
+        wrapper.eq(User::getPhone, phone);
+        return this.getOne(wrapper);
     }
 
     @Override
-    public String login(String phone, String password) {
-        return null;
+    public String login(String phone, String password) throws Exception {
+        //校验非空
+        if (StringUtils.isAnyBlank(phone, password)) {
+            throw new BusinessException(PARAM_ERROR_CODE, PARAM_EMPTY_ERROR);
+        }
+        //检查用户是否存在
+        User dbUser = checkPhone(phone);
+        if (dbUser == null) {
+            throw new BusinessException(GET_MESSAGE_ERROR, PHONE_NOT_EXIST_ERROR);
+        }
+        //密码解密
+        String rawPassword;
+        try {
+            rawPassword = RSAUtil.decrypt(password);
+        } catch (Exception e) {
+            throw new BusinessException(PARAM_ERROR_CODE, RSA_DECODE_FAIL);
+        }
+        //校验密码
+        String salt = dbUser.getSalt();
+        String md5Password = MD5Util.sign(rawPassword, salt, "UTF-8");
+        if (!md5Password.equals(dbUser.getUserPassword())) {
+            throw new BusinessException(REQUEST_SERVICE_ERROR, PASSWORD_ERROR);
+        }
+        String token = TokenUtils.generateToken(dbUser.getId());
+        if (token == null || StringUtils.isBlank(token)) {
+            throw new BusinessException(GET_MESSAGE_ERROR,GENERATE_TOKEN_ERROR);
+        }
+        return token;
+    }
+
+    @Override
+    public User getByUserId(Long userId) {
+        User user = this.getById(userId);
+        user.setUserPassword(null);
+        LambdaQueryWrapper<UserInfo> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(UserInfo::getUserId, userId);
+        UserInfo userInfo = userInfoService.getOne(wrapper);
+        user.setUserInfo(userInfo);
+        return user;
+    }
+
+    @Override
+    public void updateUser(User user) {
+        user.setUpdateTime(new Date());
+        userMapper.updateUser(user);
     }
 }
 
