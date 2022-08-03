@@ -1,7 +1,11 @@
 package com.bilibili.service;
 
+import com.bilibili.model.domain.User;
 import com.bilibili.model.domain.UserInfo;
 import com.baomidou.mybatisplus.extension.service.IService;
+
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author sgh
@@ -15,4 +19,12 @@ public interface UserInfoService extends IService<UserInfo> {
      * @param userInfo 用户信息
      */
     void updateUserInfo(UserInfo userInfo);
+
+    /**
+     * 根据用户id集合查询用户
+     *
+     * @param userIds 用户id集合
+     * @return 查询结果
+     */
+    List<UserInfo> getByUserIds(Set<Long> userIds);
 }

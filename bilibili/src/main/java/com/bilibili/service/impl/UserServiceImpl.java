@@ -19,6 +19,8 @@ import javax.annotation.Resource;
 
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import static com.bilibili.base.ErrorCode.PUT_SERVICE_ERROR;
@@ -135,7 +137,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         }
         String token = TokenUtils.generateToken(dbUser.getId());
         if (token == null || StringUtils.isBlank(token)) {
-            throw new BusinessException(GET_MESSAGE_ERROR,GENERATE_TOKEN_ERROR);
+            throw new BusinessException(GET_MESSAGE_ERROR, GENERATE_TOKEN_ERROR);
         }
         return token;
     }

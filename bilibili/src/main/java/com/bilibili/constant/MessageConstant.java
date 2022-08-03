@@ -40,6 +40,7 @@ public class MessageConstant {
     public static final String SUCCESS = "成功!";
     public static final String REGISTER_SUCCESS = "注册成功";
     public static final String LOGIN_SUCCESS = "登录成功";
+    public static final String FOLLOW_SUCCESS = "关注成功";
 
 
     /**
@@ -56,6 +57,12 @@ public class MessageConstant {
     public static final String TOKEN_EXPIRE_ERROR = "token已过期";
     public static final String TOKEN_DECODE_ERROR = "token不合法";
     public static final String GET_USER_ERROR = "获取用户信息失败";
+    public static final String GROUP_TYPE_ID_ERROR = "关注分组类型id错误";
+    public static final String GROUP_NOT_EXIST_ERROR = "关注分组不存在";
+    public static final String GROUP_ID_ERROR = "关注分组不存在";
+    public static final String FOLLOWING_USER_NOT_EXIST_ERROR = "关注用户不存在";
+    public static final String USER_ID_ERROR = "用户ID错误";
+    public static final String ADD_FOLLOWING_REPEAT_ERROR = "请勿重复添加";
 
 
 

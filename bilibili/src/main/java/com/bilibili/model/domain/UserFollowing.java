@@ -1,6 +1,8 @@
 package com.bilibili.model.domain;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.util.Date;
@@ -8,6 +10,9 @@ import lombok.Data;
 
 /**
  * 用户关注表
+ *
+ * @author sgh
+ * @date 2022-8-2
  * @TableName t_user_following
  */
 @TableName(value ="t_user_following")
@@ -16,7 +21,7 @@ public class UserFollowing implements Serializable {
     /**
      * 主键id
      */
-    @TableField(value = "id")
+    @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
     /**
@@ -35,7 +40,19 @@ public class UserFollowing implements Serializable {
      * 关注分组id
      */
     @TableField(value = "groupId")
-    private Integer groupId;
+    private Long groupId;
+
+    /**
+     * 被关注的人/粉丝的基本信息
+     */
+    @TableField(exist = false)
+    private UserInfo followingUserInfo;
+
+    /**
+     * 是否互相关注
+     */
+    @TableField(exist = false)
+    private Boolean followed;
 
     /**
      * 创建时间

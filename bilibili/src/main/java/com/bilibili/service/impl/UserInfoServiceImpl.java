@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 /**
 * @author sgh
@@ -25,6 +27,11 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo>
     public void updateUserInfo(UserInfo userInfo) {
         userInfo.setUpdateTime(new Date());
         userInfoMapper.updateUserInfo(userInfo);
+    }
+
+    @Override
+    public List<UserInfo> getByUserIds(Set<Long> userIds) {
+        return userInfoMapper.getByUserIds(userIds);
     }
 }
 

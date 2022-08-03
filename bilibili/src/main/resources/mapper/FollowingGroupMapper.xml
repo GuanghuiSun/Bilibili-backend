@@ -6,8 +6,8 @@
 
     <resultMap id="BaseResultMap" type="com.bilibili.model.domain.FollowingGroup">
             <id property="id" column="id" jdbcType="BIGINT"/>
-            <result property="userId" column="userId" jdbcType="BIGINT"/>
             <result property="groupName" column="groupName" jdbcType="VARCHAR"/>
+            <result property="userId" column="userId" jdbcType="BIGINT"/>
             <result property="type" column="type" jdbcType="TINYINT"/>
             <result property="createTime" column="createTime" jdbcType="TIMESTAMP"/>
             <result property="updateTime" column="updateTime" jdbcType="TIMESTAMP"/>
@@ -15,7 +15,7 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,userId,groupName,
+        id,groupName,userId,
         type,createTime,updateTime,
         isDeleted
     </sql>

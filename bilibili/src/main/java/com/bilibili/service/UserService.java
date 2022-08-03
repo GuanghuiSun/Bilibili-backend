@@ -3,6 +3,9 @@ package com.bilibili.service;
 import com.bilibili.model.domain.User;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.List;
+import java.util.Set;
+
 /**
  * @author sgh
  * @description 针对表【t_user(用户表)】的数据库操作Service
@@ -20,8 +23,8 @@ public interface UserService extends IService<User> {
     /**
      * 注册
      *
-     * @param phone         手机号
-     * @param password      密码
+     * @param phone    手机号
+     * @param password 密码
      * @return userId
      */
     Long register(String phone, String password);
@@ -38,6 +41,7 @@ public interface UserService extends IService<User> {
 
     /**
      * 根据userId查询user
+     *
      * @param userId 用户Id
      * @return user
      */
@@ -45,6 +49,7 @@ public interface UserService extends IService<User> {
 
     /**
      * 更新用户信息
+     *
      * @param user 用户
      */
     void updateUser(User user);

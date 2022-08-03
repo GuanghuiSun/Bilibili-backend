@@ -7,8 +7,8 @@ import com.bilibili.exception.BusinessException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 /**
  * 全局异常处理器
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
  * @date 2022-8-1
  */
 @Slf4j
-@ControllerAdvice
+@RestControllerAdvice
 @Order(Ordered.HIGHEST_PRECEDENCE)//Spring容器内bean的执行优先级
 public class GlobalExceptionHandler {
 
@@ -34,6 +34,13 @@ public class GlobalExceptionHandler {
         return ResultUtils.error(e.getCode(), e.getMessage(), e.getDescription());
     }
 
+    /**
+     * 系统异常
+     * @param e 异常
+     * @param <T> 数据类型
+     * @return 响应消息
+     */
+    @ExceptionHandler(RuntimeException.class)
     public <T> BaseResponse<T> runtimeExceptionHandler(RuntimeException e) {
         log.error("runtimeException:" + e.getMessage(), e);
         return ResultUtils.error(ErrorCode.SYSTEM_ERROR);

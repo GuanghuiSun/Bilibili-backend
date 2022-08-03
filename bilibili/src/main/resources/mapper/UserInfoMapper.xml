@@ -45,4 +45,16 @@
         updateTime = #{updateTime}
         where userId = #{userId}
     </update>
+    <select id="getByUserIds" resultType="com.bilibili.model.domain.UserInfo">
+        select *
+        from t_user_info
+        <where>
+            <if test="userIds != null and userIds.size > 0">
+                and userId in
+                <foreach collection="userIds" item="userId" index="index" open="(" close=")" separator=",">
+                    #{userId}
+                </foreach>
+            </if>
+        </where>
+    </select>
 </mapper>

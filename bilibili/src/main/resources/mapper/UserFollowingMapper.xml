@@ -5,16 +5,47 @@
 <mapper namespace="com.bilibili.mapper.UserFollowingMapper">
 
     <resultMap id="BaseResultMap" type="com.bilibili.model.domain.UserFollowing">
-            <result property="id" column="id" jdbcType="BIGINT"/>
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="userId" column="userId" jdbcType="BIGINT"/>
+        <result property="followingId" column="followingId" jdbcType="BIGINT"/>
+        <result property="groupId" column="groupId" jdbcType="BIGINT"/>
+        <result property="createTime" column="createTime" jdbcType="TIMESTAMP"/>
+        <result property="isUnfollowed" column="isUnfollowed" jdbcType="TINYINT"/>
+        <association property="followingUserInfo" javaType="com.bilibili.model.domain.UserInfo">
             <result property="userId" column="userId" jdbcType="BIGINT"/>
-            <result property="followingId" column="followingId" jdbcType="BIGINT"/>
-            <result property="groupId" column="groupId" jdbcType="INTEGER"/>
-            <result property="createTime" column="createTime" jdbcType="TIMESTAMP"/>
-            <result property="isUnfollowed" column="isUnfollowed" jdbcType="TINYINT"/>
+            <result property="nick" column="nick" jdbcType="VARCHAR"/>
+            <result property="avatar" column="avatar" jdbcType="VARCHAR"/>
+            <result property="sign" column="sign" jdbcType="VARCHAR"/>
+            <result property="gender" column="gender" jdbcType="TINYINT"/>
+            <result property="birth" column="birth" jdbcType="VARCHAR"/>
+        </association>
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,userId,followingId,
+        id
+        ,userId,followingId,
         groupId,createTime,isUnfollowed
     </sql>
+    <select id="getUserFollowings" resultMap="BaseResultMap">
+        select t.*, m.*
+        from t_user_following t,
+             (select userId, nick, avatar, sign, gender, birth
+              from t_user_info
+              where userId in
+                    (select followingId from t_user_following where userId = #{userId})
+             ) m
+        where t.userId = #{userId}
+          and t.followingId = m.userId
+    </select>
+    <select id="getUserFans" resultType="com.bilibili.model.domain.UserFollowing">
+        select t.*, m.*
+        from t_user_following t,
+             (select userId, nick, avatar, sign, gender, birth
+              from t_user_info
+              where userId in
+                    (select userId from t_user_following where followingId = #{userId})
+             ) m
+        where t.followingId = #{userId}
+          and t.userId = m.userId
+    </select>
 </mapper>

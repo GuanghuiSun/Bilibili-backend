@@ -3,6 +3,9 @@ package com.bilibili.mapper;
 import com.bilibili.model.domain.UserInfo;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
+import java.util.List;
+import java.util.Set;
+
 /**
  * @author sgh
  * @description 针对表【t_user_info(用户信息表)】的数据库操作Mapper
@@ -12,6 +15,8 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 public interface UserInfoMapper extends BaseMapper<UserInfo> {
 
     void updateUserInfo(UserInfo userInfo);
+
+    List<UserInfo> getByUserIds(Set<Long> userIds);
 }
 
 
