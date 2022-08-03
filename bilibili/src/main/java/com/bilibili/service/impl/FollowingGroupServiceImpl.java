@@ -15,24 +15,25 @@ import static com.bilibili.base.ErrorCode.GET_SERVICE_ERROR;
 import static com.bilibili.base.ErrorCode.PARAM_ERROR;
 import static com.bilibili.constant.MessageConstant.*;
 import static com.bilibili.constant.MessageConstant.GROUP_NOT_EXIST_ERROR;
+import static com.bilibili.constant.user.UserConstant.USER_FOLLOWING_GROUP_TYPE_USER;
 
 /**
-* @author sgh
-* @description 针对表【t_following_group(用户关注分组表)】的数据库操作Service实现
-* @createDate 2022-08-03 13:42:57
-*/
+ * @author sgh
+ * @description 针对表【t_following_group(用户关注分组表)】的数据库操作Service实现
+ * @createDate 2022-08-03 13:42:57
+ */
 @Service
 public class FollowingGroupServiceImpl extends ServiceImpl<FollowingGroupMapper, FollowingGroup>
-    implements FollowingGroupService{
+        implements FollowingGroupService {
     @Override
     public FollowingGroup getByType(Byte type) {
-        if(type == null || type < 0) {
+        if (type == null || type < 0) {
             throw new BusinessException(PARAM_ERROR, GROUP_TYPE_ID_ERROR);
         }
         LambdaQueryWrapper<FollowingGroup> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(FollowingGroup::getType, type);
         FollowingGroup result = this.getOne(wrapper);
-        if(result == null) {
+        if (result == null) {
             throw new BusinessException(GET_SERVICE_ERROR, GROUP_NOT_EXIST_ERROR);
         }
         return result;
@@ -40,11 +41,11 @@ public class FollowingGroupServiceImpl extends ServiceImpl<FollowingGroupMapper,
 
     @Override
     public FollowingGroup getByGroupId(Long id) {
-        if(id < 0) {
+        if (id < 0) {
             throw new BusinessException(PARAM_ERROR, GROUP_ID_ERROR);
         }
         FollowingGroup result = this.getById(id);
-        if(result == null) {
+        if (result == null) {
             throw new BusinessException(GET_SERVICE_ERROR, GROUP_NOT_EXIST_ERROR);
         }
         return result;
@@ -52,16 +53,31 @@ public class FollowingGroupServiceImpl extends ServiceImpl<FollowingGroupMapper,
 
     @Override
     public List<FollowingGroup> getByUserId(Long userId) {
-        if(userId == null || userId < 0) {
+        if (userId == null || userId < 0) {
             throw new BusinessException(PARAM_ERROR, USER_ID_ERROR);
         }
-        LambdaQueryWrapper<FollowingGroup> wrapper =  new LambdaQueryWrapper<>();
-        wrapper.eq(FollowingGroup::getUserId, userId).or().in(FollowingGroup::getType,0,1,2);
+        LambdaQueryWrapper<FollowingGroup> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(FollowingGroup::getUserId, userId).or().in(FollowingGroup::getType, 0, 1, 2);
         List<FollowingGroup> list = this.list(wrapper);
-        if(list == null || list.isEmpty()) {
+        if (list == null || list.isEmpty()) {
             return Collections.emptyList();
         }
         return list;
+    }
+
+    @Override
+    public Long addUserFollowingGroup(FollowingGroup followingGroup) {
+        //设置分组类别为用户自定义分组
+        followingGroup.setType(USER_FOLLOWING_GROUP_TYPE_USER);
+        this.save(followingGroup);
+        return followingGroup.getId();
+    }
+
+    @Override
+    public List<FollowingGroup> getUserFollowingGroups(Long userId) {
+        LambdaQueryWrapper<FollowingGroup> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(FollowingGroup::getUserId, userId);
+        return this.list(wrapper);
     }
 }
 

@@ -32,20 +32,30 @@
              (select userId, nick, avatar, sign, gender, birth
               from t_user_info
               where userId in
-                    (select followingId from t_user_following where userId = #{userId})
+                    (select followingId from t_user_following where userId = #{userId} and isUnfollowed = 0)
              ) m
         where t.userId = #{userId}
           and t.followingId = m.userId
     </select>
-    <select id="getUserFans" resultType="com.bilibili.model.domain.UserFollowing">
+
+    <select id="getUserFans" resultMap="BaseResultMap">
         select t.*, m.*
         from t_user_following t,
              (select userId, nick, avatar, sign, gender, birth
               from t_user_info
               where userId in
-                    (select userId from t_user_following where followingId = #{userId})
+                    (select userId from t_user_following where followingId = #{userId} and isUnfollowed = 0)
              ) m
         where t.followingId = #{userId}
           and t.userId = m.userId
     </select>
+
+    <update id="cancelUserFollowing" parameterType="com.bilibili.model.domain.UserFollowing">
+        update t_user_following
+        set isUnfollowed = 1
+        where userId = #{userId}
+          and followingId = #{followingId}
+          and isUnfollowed = 0
+    </update>
+
 </mapper>

@@ -41,6 +41,7 @@ public class MessageConstant {
     public static final String REGISTER_SUCCESS = "注册成功";
     public static final String LOGIN_SUCCESS = "登录成功";
     public static final String FOLLOW_SUCCESS = "关注成功";
+    public static final String UNFOLLOW_SUCCESS = "取消关注成功";
 
 
     /**
@@ -62,7 +63,8 @@ public class MessageConstant {
     public static final String GROUP_ID_ERROR = "关注分组不存在";
     public static final String FOLLOWING_USER_NOT_EXIST_ERROR = "关注用户不存在";
     public static final String USER_ID_ERROR = "用户ID错误";
-    public static final String ADD_FOLLOWING_REPEAT_ERROR = "请勿重复添加";
+    public static final String ADD_FOLLOWING_REPEAT_ERROR = "请勿重复关注";
+    public static final String FOLLOWING_NOT_EXIST_ERROR = "还未关注";
 
 
 

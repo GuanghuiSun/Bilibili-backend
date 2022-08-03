@@ -35,4 +35,18 @@ public interface FollowingGroupService extends IService<FollowingGroup> {
      * @return 所有分组
      */
     List<FollowingGroup> getByUserId(Long userId);
+
+    /**
+     * 创建用户分组
+     * @param followingGroup 分组
+     * @return 分组id
+     */
+    Long addUserFollowingGroup(FollowingGroup followingGroup);
+
+    /**
+     * 获取用户创建的分组
+     * @param userId 用户id
+     * @return 分组结果集
+     */
+    List<FollowingGroup> getUserFollowingGroups(Long userId);
 }

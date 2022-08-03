@@ -16,6 +16,8 @@ public interface UserFollowingMapper extends BaseMapper<UserFollowing> {
     List<UserFollowing> getUserFollowings(Long userId);
 
     List<UserFollowing> getUserFans(Long userId);
+
+    void cancelUserFollowing(UserFollowing userFollowing);
 }
 
 

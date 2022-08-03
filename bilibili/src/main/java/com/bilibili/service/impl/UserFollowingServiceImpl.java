@@ -1,6 +1,7 @@
 package com.bilibili.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.bilibili.exception.BusinessException;
 import com.bilibili.model.domain.FollowingGroup;
@@ -20,8 +21,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.bilibili.base.ErrorCode.PARAM_ERROR;
-import static com.bilibili.base.ErrorCode.PUT_SERVICE_ERROR;
+import static com.bilibili.base.ErrorCode.*;
 import static com.bilibili.constant.MessageConstant.*;
 import static com.bilibili.constant.user.UserConstant.USER_FOLLOWING_GROUP_NAME_DEFAULT;
 import static com.bilibili.constant.user.UserConstant.USER_FOLLOWING_GROUP_TYPE_DEFAULT;
@@ -151,6 +151,18 @@ public class UserFollowingServiceImpl extends ServiceImpl<UserFollowingMapper, U
             }
         }
         return fans;
+    }
+
+    @Override
+    public void cancelUserFollowing(UserFollowing userFollowing) {
+        //检查关注关系是否存在
+        Long userId = userFollowing.getUserId();
+        Long followingId = userFollowing.getFollowingId();
+        UserFollowing queryResult = getOneUserFollowing(userId, followingId);
+        if(queryResult == null) {
+            throw new BusinessException(REQUEST_SERVICE_ERROR, FOLLOWING_NOT_EXIST_ERROR);
+        }
+        userFollowingMapper.cancelUserFollowing(userFollowing);
     }
 }
 

@@ -44,4 +44,11 @@ public interface UserFollowingService extends IService<UserFollowing> {
      * @return 粉丝列表
      */
     List<UserFollowing> getUserFans(Long userId);
+
+    /**
+     * 取消关注
+     *
+     * @param userFollowing 关注关系
+     */
+    void cancelUserFollowing(UserFollowing userFollowing);
 }
