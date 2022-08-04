@@ -6,6 +6,7 @@ import com.bilibili.base.ErrorCode;
 import com.bilibili.exception.BusinessException;
 import com.bilibili.model.domain.User;
 import com.bilibili.model.domain.UserInfo;
+import com.bilibili.service.UserAuthService;
 import com.bilibili.service.UserInfoService;
 import com.bilibili.service.UserService;
 import com.bilibili.mapper.UserMapper;
@@ -42,6 +43,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 
     @Resource
     private UserInfoService userInfoService;
+
+    @Resource
+    private UserAuthService userAuthService;
 
     @Override
     public String getRsaPublicKey() {
@@ -96,7 +100,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         userInfo.setGender(GENDER_MALE);
         userInfo.setBirth(DEFAULT_BIRTH);
         userInfoService.save(userInfo);
-        return user.getId();
+        //添加用户默认权限角色
+        Long userId = user.getId();
+        userAuthService.addUserDefaultRole(userId);
+        return userId;
     }
 
     /**

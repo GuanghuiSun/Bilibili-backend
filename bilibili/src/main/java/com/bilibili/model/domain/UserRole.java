@@ -34,6 +34,12 @@ public class UserRole implements Serializable {
     private Long roleId;
 
     /**
+     * 角色
+     */
+    @TableField(exist = false)
+    private AuthRole authRole;
+
+    /**
      * 创建时间
      */
     @TableField(value = "createTime")

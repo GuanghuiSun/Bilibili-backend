@@ -45,7 +45,7 @@
         updateTime = #{updateTime}
         where userId = #{userId}
     </update>
-    <select id="getByUserIds" resultType="com.bilibili.model.domain.UserInfo">
+    <select id="getByUserIds" resultType="com.bilibili.model.domain.UserInfo" parameterType="java.util.Set">
         select *
         from t_user_info
         <where>

@@ -1,5 +1,7 @@
 package com.bilibili.controller;
 
+import com.bilibili.annotation.ApiLimitedRole;
+import com.bilibili.annotation.DataLimited;
 import com.bilibili.base.BaseResponse;
 import com.bilibili.base.ResultUtils;
 import com.bilibili.exception.BusinessException;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 
 import static com.bilibili.base.ErrorCode.PARAM_ERROR;
+import static com.bilibili.constant.user.AuthRoleConstant.ROLE_CODE_LV0;
 
 @RestController
 @RequestMapping("/userMoments")
@@ -32,6 +35,8 @@ public class UserMomentsController {
      * @param userMoments 动态
      * @return 响应结果
      */
+    @ApiLimitedRole(limitedRoleCodeList = {ROLE_CODE_LV0})
+    @DataLimited
     @PostMapping("/add")
     public BaseResponse<Boolean> addUserMoments(@RequestBody UserMoments userMoments) {
         if (userMoments == null) {

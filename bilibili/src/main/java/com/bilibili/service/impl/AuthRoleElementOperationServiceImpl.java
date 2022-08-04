@@ -6,6 +6,10 @@ import com.bilibili.service.AuthRoleElementOperationService;
 import com.bilibili.mapper.AuthRoleElementOperationMapper;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
+import java.util.List;
+import java.util.Set;
+
 /**
 * @author sgh
 * @description 针对表【t_auth_role_element_operation(权限控制-角色与元素操作关联表)】的数据库操作Service实现
@@ -15,6 +19,13 @@ import org.springframework.stereotype.Service;
 public class AuthRoleElementOperationServiceImpl extends ServiceImpl<AuthRoleElementOperationMapper, AuthRoleElementOperation>
     implements AuthRoleElementOperationService{
 
+    @Resource
+    private AuthRoleElementOperationMapper roleElementOperationMapper;
+
+    @Override
+    public List<AuthRoleElementOperation> getByRoleIds(Set<Long> roleIdSet) {
+        return roleElementOperationMapper.getByRoleIds(roleIdSet);
+    }
 }
 
 

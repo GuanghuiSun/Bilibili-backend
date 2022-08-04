@@ -5,14 +5,30 @@
 <mapper namespace="com.bilibili.mapper.AuthRoleElementOperationMapper">
 
     <resultMap id="BaseResultMap" type="com.bilibili.model.domain.AuthRoleElementOperation">
-            <id property="id" column="id" jdbcType="BIGINT"/>
-            <result property="roleId" column="roleId" jdbcType="BIGINT"/>
-            <result property="elementOperationId" column="elementOperationId" jdbcType="BIGINT"/>
-            <result property="createTime" column="createTime" jdbcType="TIMESTAMP"/>
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="roleId" column="roleId" jdbcType="BIGINT"/>
+        <result property="elementOperationId" column="elementOperationId" jdbcType="BIGINT"/>
+        <result property="createTime" column="createTime" jdbcType="TIMESTAMP"/>
+        <association property="authElementOperation" javaType="com.bilibili.model.domain.AuthElementOperation">
+            <result property="elementName" column="elementName" jdbcType="VARCHAR"/>
+            <result property="elementCode" column="elementCode" jdbcType="VARCHAR"/>
+            <result property="operationType" column="operationType" jdbcType="TINYINT"/>
+        </association>
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,roleId,elementOperationId,
+        id
+        ,roleId,elementOperationId,
         createTime
     </sql>
+    <select id="getByRoleIds" resultMap="BaseResultMap" parameterType="java.util.Set">
+        select aroe.*, aeo.elementName, aeo.elementCode, aeo.operationType
+        from t_auth_role_element_operation aroe
+        left join t_auth_element_operation aeo on aroe.elementOperationId = aeo.id
+        where
+        aroe.roleId in
+        <foreach collection="roleIdSet" item="roleId" index="index" open="(" close=")" separator=",">
+            #{roleId}
+        </foreach>
+    </select>
 </mapper>

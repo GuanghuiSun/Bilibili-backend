@@ -5,14 +5,29 @@
 <mapper namespace="com.bilibili.mapper.AuthRoleMenuMapper">
 
     <resultMap id="BaseResultMap" type="com.bilibili.model.domain.AuthRoleMenu">
-            <id property="id" column="id" jdbcType="BIGINT"/>
-            <result property="roleId" column="roleId" jdbcType="BIGINT"/>
-            <result property="menuId" column="menuId" jdbcType="BIGINT"/>
-            <result property="createTime" column="createTime" jdbcType="TIMESTAMP"/>
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="roleId" column="roleId" jdbcType="BIGINT"/>
+        <result property="menuId" column="menuId" jdbcType="BIGINT"/>
+        <result property="createTime" column="createTime" jdbcType="TIMESTAMP"/>
+        <association property="authMenu" javaType="com.bilibili.model.domain.AuthMenu">
+            <result property="name" column="name" jdbcType="VARCHAR"/>
+            <result property="code" column="code" jdbcType="VARCHAR"/>
+        </association>
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,roleId,menuId,
+        id
+        ,roleId,menuId,
         createTime
     </sql>
+    <select id="getByRoleIds" resultMap="BaseResultMap" parameterType="java.util.Set">
+        select arm.*, am.name, am.code
+        from t_auth_role_menu arm,
+        left join t_auth_menu am on arm.menuId = am.id
+        where
+            arm.roleId in
+            <foreach collection="roleIdSet" index="index" item="roleId" open="(" close=")" separator=",">
+                #{roleId}
+            </foreach>
+    </select>
 </mapper>

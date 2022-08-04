@@ -2,6 +2,7 @@ package com.bilibili.mapper;
 
 import com.bilibili.model.domain.UserInfo;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Set;
@@ -16,7 +17,7 @@ public interface UserInfoMapper extends BaseMapper<UserInfo> {
 
     void updateUserInfo(UserInfo userInfo);
 
-    List<UserInfo> getByUserIds(Set<Long> userIds);
+    List<UserInfo> getByUserIds(@Param("userIds") Set<Long> userIds);
 }
 
 

@@ -20,7 +20,7 @@ public interface MessageConstant {
     public static final String PUT_SERVICE_ERROR_CODE = "5004";
     public static final String REQUEST_SERVICE_ERROR_CODE = "5005";
     public static final String TOKEN_ERROR_CODE = "5006";
-//    public static final String
+    public static final String AUTH_ERROR_CODE = "5010";
 //    public static final String
     /**
      * 错误信息 message
@@ -67,6 +67,9 @@ public interface MessageConstant {
     public static final String FOLLOWING_NOT_EXIST_ERROR = "还未关注";
     public static final String MESSAGE_ERROR = "消息传递错误";
     public static final String PUT_MOMENTS_ERROR = "发布动态失败";
+    public static final String REQUEST_AUTH_ERROR = "用户权限不足";
+    public static final String MOMENTS_AUTH_ERROR = "没有权限发送该类型动态";
+    public static final String ROLE_CODE_ERROR = "角色code不存在";
 
 
 
