@@ -16,28 +16,40 @@ spring:
       maxWait: 60000
       timeBetweenEvictionRunsMillis: 60000
       minEvictableIdleTimeMillis: 30000
-#  redis:
-#    host:
-#    port: 6379
-#    password:
-#    lettuce:
-#      pool:
-#        max-active: 10
-#        max-idle: 10
-#        min-idle: 1
-#        time-between-eviction-runs: 10s
-#  rabbitmq:
-#    host:
-#    username: admin
-#    password: admin
-#    port: 5672
-#    virtual-host: /
-#    publisher-returns: true
-#    # 下面这些无法通过注入写入程序 需要手动在Listener中配置
-#    listener:
-#      simple:
-#        acknowledge-mode: manual  #Ack响应方式
-#        prefetch: 1 #QOS设置限流
+  redis:
+    host: 101.43.234.27
+    port: 6379
+    password: Guanghui521.
+    lettuce:
+      pool:
+        max-active: 10
+        max-idle: 10
+        min-idle: 1
+        time-between-eviction-runs: 10s
+  kafka:
+    bootstrap-servers: 101.43.234.27:9092
+    producer: # 生产者
+      retries: 3  #发送失败重试次数
+      acks: all  #所有分区副本确认后，才算消息发送成功
+      # 指定消息key和消息体的序列化编码方式
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    consumer: #消费者
+      group-id: bilibili
+      auto-offset-reset: latest
+      # 自动确认
+      enable-auto-commit: true
+      auto-commit-interval: 100
+      # 指定消息key和消息体的反序列化解码方式，与生产者序列化方式一一对应
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:  # 这个配置参数相对默认，会在下文中介绍
+        spring:
+          json:
+            trusted:
+              packages: '*'
+
+
 
 mybatis-plus:
   configuration:

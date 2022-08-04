@@ -6,7 +6,7 @@ package com.bilibili.constant;
  * @author sgh
  * @date 2022-8-1
  */
-public class MessageConstant {
+public interface MessageConstant {
     /**
      * 状态码
      *
@@ -65,6 +65,8 @@ public class MessageConstant {
     public static final String USER_ID_ERROR = "用户ID错误";
     public static final String ADD_FOLLOWING_REPEAT_ERROR = "请勿重复关注";
     public static final String FOLLOWING_NOT_EXIST_ERROR = "还未关注";
+    public static final String MESSAGE_ERROR = "消息传递错误";
+    public static final String PUT_MOMENTS_ERROR = "发布动态失败";
 
 
 

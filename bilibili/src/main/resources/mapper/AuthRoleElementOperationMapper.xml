@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bilibili.mapper.AuthRoleElementOperationMapper">
+
+    <resultMap id="BaseResultMap" type="com.bilibili.model.domain.AuthRoleElementOperation">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="roleId" column="roleId" jdbcType="BIGINT"/>
+            <result property="elementOperationId" column="elementOperationId" jdbcType="BIGINT"/>
+            <result property="createTime" column="createTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,roleId,elementOperationId,
+        createTime
+    </sql>
+</mapper>
