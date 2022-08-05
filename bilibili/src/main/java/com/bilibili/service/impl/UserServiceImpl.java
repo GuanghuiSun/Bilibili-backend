@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.bilibili.base.ErrorCode;
 import com.bilibili.exception.BusinessException;
+import com.bilibili.model.domain.RefreshToken;
 import com.bilibili.model.domain.User;
 import com.bilibili.model.domain.UserInfo;
 import com.bilibili.service.UserAuthService;
@@ -19,9 +20,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 
 import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Pattern;
 
 import static com.bilibili.base.ErrorCode.PUT_SERVICE_ERROR;
@@ -119,7 +118,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     }
 
     @Override
-    public String login(String phone, String password) throws Exception {
+    public Map<String, Object> login(String phone, String password) throws Exception {
         //校验非空
         if (StringUtils.isAnyBlank(phone, password)) {
             throw new BusinessException(PARAM_ERROR_CODE, PARAM_EMPTY_ERROR);
@@ -142,11 +141,23 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         if (!md5Password.equals(dbUser.getUserPassword())) {
             throw new BusinessException(REQUEST_SERVICE_ERROR, PASSWORD_ERROR);
         }
-        String token = TokenUtils.generateToken(dbUser.getId());
-        if (token == null || StringUtils.isBlank(token)) {
+        Long userId = dbUser.getId();
+        Map<String, Object> result = new HashMap<>();
+        //获取双token
+        String accessToken = TokenUtils.generateToken(userId);
+        if (accessToken == null || StringUtils.isBlank(accessToken)) {
             throw new BusinessException(GET_MESSAGE_ERROR, GENERATE_TOKEN_ERROR);
         }
-        return token;
+        result.put("accessToken", accessToken);
+        String refreshToken = TokenUtils.generateRefreshToken(userId);
+        if (refreshToken == null || StringUtils.isBlank(refreshToken)) {
+            throw new BusinessException(GET_MESSAGE_ERROR, GENERATE_TOKEN_ERROR);
+        }
+        result.put("refreshToken", refreshToken);
+        //保存refreshToken到数据库
+        userMapper.deleteRefreshToken(refreshToken, userId);
+        userMapper.addRefreshToken(refreshToken, userId);
+        return result;
     }
 
     @Override
@@ -164,6 +175,23 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     public void updateUser(User user) {
         user.setUpdateTime(new Date());
         userMapper.updateUser(user);
+    }
+
+    @Override
+    public void logout(String refreshToken, Long userId) {
+        userMapper.deleteRefreshToken(refreshToken, userId);
+    }
+
+    @Override
+    public String refreshAccessToken(String refreshToken) throws Exception {
+        if(refreshToken == null) {
+            throw new BusinessException(PARAM_ERROR_CODE, PARAM_EMPTY_ERROR);
+        }
+        RefreshToken token = userMapper.getRefreshTokenDetail(refreshToken);
+        if(token == null) {
+            throw new BusinessException(TOKEN_ERROR_CODE, USER_STATUS_ERROR, TOKEN_EXPIRE_ERROR);
+        }
+        return TokenUtils.generateToken(token.getUserId());
     }
 }
 

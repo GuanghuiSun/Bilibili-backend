@@ -40,6 +40,7 @@ public interface MessageConstant {
     public static final String SUCCESS = "成功!";
     public static final String REGISTER_SUCCESS = "注册成功";
     public static final String LOGIN_SUCCESS = "登录成功";
+    public static final String LOGOUT_SUCCESS = "退出登录成功";
     public static final String FOLLOW_SUCCESS = "关注成功";
     public static final String UNFOLLOW_SUCCESS = "取消关注成功";
 

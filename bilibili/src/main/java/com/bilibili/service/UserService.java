@@ -4,6 +4,7 @@ import com.bilibili.model.domain.User;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -35,9 +36,9 @@ public interface UserService extends IService<User> {
      *
      * @param phone    手机号
      * @param password 密码
-     * @return token
+     * @return 双token
      */
-    String login(String phone, String password) throws Exception;
+    Map<String, Object> login(String phone, String password) throws Exception;
 
     /**
      * 根据userId查询user
@@ -53,4 +54,20 @@ public interface UserService extends IService<User> {
      * @param user 用户
      */
     void updateUser(User user);
+
+    /**
+     * 退出登录
+     *
+     * @param refreshToken 刷新令牌
+     * @param userId       用户id
+     */
+    void logout(String refreshToken, Long userId);
+
+    /**
+     * 获取accessToken
+     *
+     * @param refreshToken 刷新令牌
+     * @return token
+     */
+    String refreshAccessToken(String refreshToken) throws Exception;
 }

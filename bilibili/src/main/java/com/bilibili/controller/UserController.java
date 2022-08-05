@@ -14,6 +14,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+
+import java.util.Map;
 
 import static com.bilibili.base.ErrorCode.GET_SERVICE_ERROR;
 import static com.bilibili.constant.MessageConstant.*;
@@ -34,6 +37,7 @@ public class UserController {
 
     /**
      * 获取RSA公钥
+     *
      * @return RSA公钥
      */
     @GetMapping("/rsa-pks")
@@ -44,57 +48,88 @@ public class UserController {
 
     /**
      * 注册
+     *
      * @param request 注册请求体
      * @return 用户Id
      */
     @PostMapping("/register")
     public BaseResponse<Long> register(@RequestBody UserRegisterAndLoginRequest request) {
-        if(request == null) {
+        if (request == null) {
             throw new BusinessException(ErrorCode.PARAM_ERROR);
         }
         String phone = request.getPhone();
         String password = request.getPassword();
-        return ResultUtils.success(userService.register(phone, password),REGISTER_SUCCESS);
+        return ResultUtils.success(userService.register(phone, password), REGISTER_SUCCESS);
     }
 
     /**
      * 登录接口
+     *
      * @param request 登录请求体
-     * @return token
+     * @return 双token
      * @throws Exception 加解密异常
      */
     @PostMapping("/login")
-    public BaseResponse<String> login(@RequestBody UserRegisterAndLoginRequest request) throws Exception {
-        if(request == null) {
+    public BaseResponse<Map<String, Object>> login(@RequestBody UserRegisterAndLoginRequest request) throws Exception {
+        if (request == null) {
             throw new BusinessException(ErrorCode.PARAM_ERROR);
         }
         String phone = request.getPhone();
         String password = request.getPassword();
-        return ResultUtils.success(userService.login(phone, password),LOGIN_SUCCESS);
+        return ResultUtils.success(userService.login(phone, password), LOGIN_SUCCESS);
+    }
+
+    /**
+     * 退出登录 删除refreshToken
+     *
+     * @param request 请求体
+     * @return 响应体
+     */
+    @PostMapping("/logout")
+    public BaseResponse<Boolean> logout(HttpServletRequest request) {
+        String refreshToken = request.getHeader("refreshToken");
+        Long userId = userSupport.getCurrentUserId();
+        userService.logout(refreshToken, userId);
+        return ResultUtils.success(Boolean.TRUE, LOGOUT_SUCCESS);
+    }
+
+    /**
+     * 获取accessToken
+     *
+     * @param request 请求体
+     * @return token
+     */
+    @GetMapping("/token")
+    public BaseResponse<String> refreshAccessToken(HttpServletRequest request) throws Exception {
+        String refreshToken = request.getHeader("refreshToken");
+        String accessToken = userService.refreshAccessToken(refreshToken);
+        return ResultUtils.success(accessToken);
     }
 
     /**
      * 获取当前用户信息
+     *
      * @return 用户信息
      */
     @GetMapping("/user")
     public BaseResponse<User> getUserInfo() {
         Long userId = userSupport.getCurrentUserId();
         User user = userService.getByUserId(userId);
-        if(user == null) {
-            throw new BusinessException(GET_SERVICE_ERROR,GET_USER_ERROR);
+        if (user == null) {
+            throw new BusinessException(GET_SERVICE_ERROR, GET_USER_ERROR);
         }
         return ResultUtils.success(user);
     }
 
     /**
      * 更新用户基本信息
+     *
      * @param user 用户信息
      * @return 是否成功
      */
     @PutMapping("/user")
     public BaseResponse<Boolean> updateUser(@RequestBody User user) {
-        if(user == null) {
+        if (user == null) {
             throw new BusinessException(ErrorCode.PARAM_ERROR);
         }
         Long userId = userSupport.getCurrentUserId();
@@ -105,12 +140,13 @@ public class UserController {
 
     /**
      * 更新用户详细信息
+     *
      * @param userInfo 用户信息
      * @return 是否成功
      */
     @PutMapping("/userInfo")
     public BaseResponse<Boolean> updateUserInfo(@RequestBody UserInfo userInfo) {
-        if(userInfo == null) {
+        if (userInfo == null) {
             throw new BusinessException(ErrorCode.PARAM_ERROR);
         }
         Long userId = userSupport.getCurrentUserId();

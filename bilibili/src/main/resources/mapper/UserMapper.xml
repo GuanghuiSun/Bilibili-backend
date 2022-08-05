@@ -34,4 +34,19 @@
         updateTime = #{updateTime}
         where id = #{id}
     </update>
+    <update id="deleteRefreshToken">
+        update t_refresh_token
+        set isDeleted = 1
+        where refreshToken = #{refreshToken}
+    </update>
+    <select id="getRefreshTokenDetail" parameterType="java.lang.String" resultType="com.bilibili.model.domain.RefreshToken">
+        select * from t_refresh_token
+        where refreshToken = #{refreshToken}
+    </select>
+
+    <insert id="addRefreshToken">
+        insert into t_refresh_token
+            (refreshToken, userId)
+        values (#{refreshToken}, #{userId})
+    </insert>
 </mapper>

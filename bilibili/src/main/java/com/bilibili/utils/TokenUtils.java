@@ -25,6 +25,7 @@ public class TokenUtils {
 
     /**
      * 创建token
+     *
      * @param userId 用户Id
      * @return token
      * @throws Exception 加解密异常
@@ -42,6 +43,7 @@ public class TokenUtils {
 
     /**
      * 验证token
+     *
      * @param token 用户token
      * @return 用户Id
      */
@@ -52,11 +54,30 @@ public class TokenUtils {
             DecodedJWT jwt = verifier.verify(token);
             String userId = jwt.getKeyId();
             return Long.valueOf(userId);
-        }catch (TokenExpiredException e) {
-            throw new BusinessException(TOKEN_ERROR_CODE,USER_STATUS_ERROR,TOKEN_EXPIRE_ERROR);
+        } catch (TokenExpiredException e) {
+            throw new BusinessException(TOKEN_ERROR_CODE, USER_STATUS_ERROR, TOKEN_EXPIRE_ERROR);
         } catch (Exception e) {
-            throw new BusinessException(TOKEN_ERROR_CODE,USER_STATUS_ERROR,TOKEN_DECODE_ERROR);
+            throw new BusinessException(TOKEN_ERROR_CODE, USER_STATUS_ERROR, TOKEN_DECODE_ERROR);
         }
+
+    }
+
+    /**
+     * 生成refresh token 用来刷新token
+     *
+     * @param userId 用户id
+     * @return refreshToken
+     * @throws Exception 加解密异常
+     */
+    public static String generateRefreshToken(Long userId) throws Exception {
+        Algorithm algorithm = Algorithm.RSA256(RSAUtil.getPublicKey(), RSAUtil.getPrivateKey());
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date());
+        calendar.add(Calendar.DAY_OF_MONTH, 7);
+        return JWT.create().withKeyId(String.valueOf(userId))
+                .withIssuer(ISSUER)
+                .withExpiresAt(calendar.getTime())
+                .sign(algorithm);
 
     }
 }
