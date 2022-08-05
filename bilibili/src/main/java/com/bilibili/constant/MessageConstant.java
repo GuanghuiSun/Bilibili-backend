@@ -21,7 +21,8 @@ public interface MessageConstant {
     public static final String REQUEST_SERVICE_ERROR_CODE = "5005";
     public static final String TOKEN_ERROR_CODE = "5006";
     public static final String AUTH_ERROR_CODE = "5010";
-//    public static final String
+    public static final String FILE_ERROR_CODE = "5020";
+    public static final String UPLOAD_TIMEOUT_ERROR_CODE = "5021";
     /**
      * 错误信息 message
      */
@@ -33,6 +34,7 @@ public interface MessageConstant {
     public static final String PUT_ERROR = "新增业务失败";
     public static final String REQUEST_ERROR = "请求业务失败";
     public static final String USER_STATUS_ERROR = "用户状态异常";
+    public static final String FILE_ERROR = "文件异常";
 
     /**
      * 成功信息
@@ -71,6 +73,10 @@ public interface MessageConstant {
     public static final String REQUEST_AUTH_ERROR = "用户权限不足";
     public static final String MOMENTS_AUTH_ERROR = "没有权限发送该类型动态";
     public static final String ROLE_CODE_ERROR = "角色code不存在";
+    public static final String FILE_TYPE_ERROR = "文件类型错误";
+    public static final String FILE_NAME_ERROR = "文件名称错误";
+    public static final String FILE_UPLOAD_TIMEOUT_ERROR = "文件上传超时，请重试!";
+    public static final String FILE_UPLOAD_ERROR = "文件分片上传失败，请重试!";
 
 
 

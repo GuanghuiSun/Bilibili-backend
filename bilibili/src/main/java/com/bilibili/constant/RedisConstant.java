@@ -9,4 +9,5 @@ package com.bilibili.constant;
 public interface RedisConstant {
 
     public static final String SUBSCRIBED_INBOX = "subscribedInbox";
+    public static final String UPLOAD_FILE_PATH = "file-path";
 }
