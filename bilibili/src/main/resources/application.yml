@@ -17,9 +17,9 @@ spring:
       timeBetweenEvictionRunsMillis: 60000
       minEvictableIdleTimeMillis: 30000
   redis:
-    host: 101.43.234.27
+    host:
     port: 6379
-    password: Guanghui521.
+    password:
     lettuce:
       pool:
         max-active: 10
@@ -27,7 +27,7 @@ spring:
         min-idle: 1
         time-between-eviction-runs: 10s
   kafka:
-    bootstrap-servers: 101.43.234.27:9092
+    bootstrap-servers:
     producer: # 生产者
       retries: 3  #发送失败重试次数
       acks: all  #所有分区副本确认后，才算消息发送成功
@@ -49,8 +49,6 @@ spring:
             trusted:
               packages: '*'
 
-
-
 mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
@@ -66,3 +64,7 @@ logging:
     root: info
     #分包配置级别，即不同的目录下可以使用不同的级别
     com.mall_admin: debug
+
+# fastDFS
+fdfs:
+  tracker-list:
