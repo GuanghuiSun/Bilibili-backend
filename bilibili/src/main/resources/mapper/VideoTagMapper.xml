@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bilibili.mapper.VideoTagMapper">
+
+    <resultMap id="BaseResultMap" type="com.bilibili.model.domain.VideoTag">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="videoId" column="videoId" jdbcType="BIGINT"/>
+            <result property="tagId" column="tagId" jdbcType="BIGINT"/>
+            <result property="createTime" column="createTime" jdbcType="TIMESTAMP"/>
+            <result property="isDeleted" column="isDeleted" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,videoId,tagId,
+        createTime,isDeleted
+    </sql>
+</mapper>

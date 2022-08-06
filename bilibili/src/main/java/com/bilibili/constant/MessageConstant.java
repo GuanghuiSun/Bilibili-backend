@@ -77,6 +77,8 @@ public interface MessageConstant {
     public static final String FILE_NAME_ERROR = "文件名称错误";
     public static final String FILE_UPLOAD_TIMEOUT_ERROR = "文件上传超时，请重试!";
     public static final String FILE_UPLOAD_ERROR = "文件分片上传失败，请重试!";
+    public static final String FILE_NOT_EXIST_ERROR = "文件还未上传";
+    public static final String FILE_MD5_ERROR = "生辰md5错误";
 
 
 

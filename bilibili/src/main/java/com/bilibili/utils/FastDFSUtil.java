@@ -4,6 +4,7 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
 import com.bilibili.exception.BusinessException;
 import com.bilibili.model.upload.UploadFileMessage;
+import com.bilibili.service.FileService;
 import com.github.tobato.fastdfs.domain.fdfs.MetaData;
 import com.github.tobato.fastdfs.domain.fdfs.StorePath;
 import com.github.tobato.fastdfs.exception.FdfsIOException;
@@ -13,10 +14,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 
-import java.io.IOException;
+import java.io.*;
 import java.net.SocketTimeoutException;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -25,6 +27,7 @@ import java.util.Set;
 
 import static com.bilibili.base.ErrorCode.FILE_SERVICE_ERROR;
 import static com.bilibili.constant.MessageConstant.*;
+import static com.bilibili.constant.RedisConstant.FILE_URL_STORAGE;
 import static com.bilibili.constant.RedisConstant.UPLOAD_FILE_PATH;
 
 /**
@@ -33,6 +36,7 @@ import static com.bilibili.constant.RedisConstant.UPLOAD_FILE_PATH;
  * @author sgh
  * @date 2022-8-5
  */
+@Component
 @Slf4j
 public class FastDFSUtil {
 
@@ -45,7 +49,12 @@ public class FastDFSUtil {
     @Resource
     private StringRedisTemplate stringRedisTemplate;
 
+    @Resource
+    private FileService fileService;
+
     public static final String DEFAULT_GROUP = "group1";
+
+    public static final int SLICE_SIZE = 1024 * 1024 * 2;
 
     /**
      * 获取文件类型
@@ -94,6 +103,13 @@ public class FastDFSUtil {
         if (param == null || file == null) {
             throw new BusinessException(FILE_SERVICE_ERROR);
         }
+        //检查文件是否上传过
+        if(param.getFilePath() != null) {
+            String url = (String) stringRedisTemplate.opsForHash().get(FILE_URL_STORAGE, param.getFilePath());
+            if(url != null) {
+                return url;
+            }
+        }
         String fileMd5 = param.getFileMd5();
         Integer total = param.getTotalSliceNumber();
         Integer sliceNumber = param.getSliceNumber();
@@ -119,32 +135,106 @@ public class FastDFSUtil {
                     uploadFileMessage.setFilePath(path);
                     uploadFileMessage.setSliceNumber(1);
                     uploadFileMessage.setTotalSliceNumber(total);
+                    uploadFileMessage.setSliceSize(sliceSize);
                     stringRedisTemplate.opsForHash().putAll(key, BeanUtil.beanToMap(uploadFileMessage, new HashMap<>(),
                             CopyOptions.create().setIgnoreNullValue(true)
-                                    .setFieldValueEditor((fieldName, fieldValue) -> fieldValue.toString())));
+                                    .setFieldValueEditor((fieldName, fieldValue) -> String.valueOf(fieldValue))));
                 }
             } else {
+                //续传
                 Map<Object, Object> map = stringRedisTemplate.opsForHash().entries(key);
                 UploadFileMessage uploadFile = BeanUtil.fillBeanWithMap(map, new UploadFileMessage(), false);
                 path = uploadFile.getFilePath();
                 long offset = (sliceNumber - 1) * sliceSize;
                 appendFileStorageClient.modifyFile(DEFAULT_GROUP, path, file.getInputStream(), file.getSize(), offset);
-                stringRedisTemplate.opsForHash().put(key, "sliceNumber", uploadFile.getSliceNumber() + 1);
+                stringRedisTemplate.opsForHash().put(key, "sliceNumber", String.valueOf(uploadFile.getSliceNumber() + 1));
             }
             //检查是否上传完毕
             Map<Object, Object> entries = stringRedisTemplate.opsForHash().entries(key);
             UploadFileMessage uploadFile = BeanUtil.fillBeanWithMap(entries, new UploadFileMessage(), false);
             Integer uploadCompleted = uploadFile.getSliceNumber();
+            //上传完毕
             if (total.equals(uploadCompleted)) {
                 stringRedisTemplate.delete(key);
+                //保存到数据库中
+                com.bilibili.model.domain.File dbFile = new com.bilibili.model.domain.File();
+                dbFile.setUrl(path);
+                dbFile.setType(getFileType(file));
+                dbFile.setMd5(fileMd5);
+                fileService.addFile(dbFile);
+                //保存url到redis中
+                stringRedisTemplate.opsForHash().putIfAbsent(FILE_URL_STORAGE, fileMd5, path);
             }
         } catch (FdfsIOException | SocketTimeoutException e) {
             throw new BusinessException(UPLOAD_TIMEOUT_ERROR_CODE, FILE_ERROR, FILE_UPLOAD_TIMEOUT_ERROR);
         } catch (Exception e) {
             log.error(e.getMessage());
-
+            e.printStackTrace();
         }
         return path;
+    }
+
+    /**
+     * 将文件分片存储 -用于测试
+     *
+     * @param multipartFile 文件
+     */
+    public void convertFileToSlices(MultipartFile multipartFile) {
+        String fileType = this.getFileType(multipartFile);
+        File file = this.multipartFileToFile(multipartFile);
+        long length = file.length();
+        int count = 1;
+        for (int i = 0; i < length; i += SLICE_SIZE) {
+            RandomAccessFile randomAccessFile = null;
+            FileOutputStream fos = null;
+            try {
+                randomAccessFile = new RandomAccessFile(file, "r");
+                randomAccessFile.seek(i);
+                byte[] bytes = new byte[SLICE_SIZE];
+                int len = randomAccessFile.read(bytes);
+                String path = "C:\\Users\\huawei\\Desktop\\" + count + "." + fileType;
+                fos = new FileOutputStream(new File(path));
+                fos.write(bytes, 0, len);
+                count++;
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    if (randomAccessFile != null) {
+                        randomAccessFile.close();
+                    }
+                    if (fos != null) {
+                        fos.close();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        file.delete();
+    }
+
+    /**
+     * 文件类型转换 用于测试
+     *
+     * @param multipartFile 文件
+     * @return 转换类型后的文件
+     */
+    public File multipartFileToFile(MultipartFile multipartFile) {
+        File file = null;
+        try {
+            String fileName = multipartFile.getOriginalFilename();
+            log.debug("filename:{}", fileName);
+            int index = 0;
+            if (fileName != null) {
+                index = fileName.lastIndexOf(".");
+                file = File.createTempFile(fileName.substring(0, index), fileName.substring(index));
+                multipartFile.transferTo(file);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return file;
     }
 
     /**

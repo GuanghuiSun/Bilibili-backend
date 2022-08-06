@@ -19,7 +19,7 @@ spring:
   redis:
     host: 101.43.234.27
     port: 6379
-    password: Guanghui521.
+    password: guanghui521.
     lettuce:
       pool:
         max-active: 10
@@ -27,7 +27,7 @@ spring:
         min-idle: 1
         time-between-eviction-runs: 10s
   kafka:
-    bootstrap-servers: 101.43.234.27:8902
+    bootstrap-servers: 101.43.234.27:9092
     producer: # 生产者
       retries: 3  #发送失败重试次数
       acks: all  #所有分区副本确认后，才算消息发送成功
@@ -48,6 +48,12 @@ spring:
           json:
             trusted:
               packages: '*'
+  # 设置请求文件最大为100MB
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      enabled: true
+      max-request-size: 100MB
 
 mybatis-plus:
   configuration:
