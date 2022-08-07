@@ -5,6 +5,7 @@ import cn.hutool.core.bean.copier.CopyOptions;
 import com.bilibili.exception.BusinessException;
 import com.bilibili.model.upload.UploadFileMessage;
 import com.bilibili.service.FileService;
+import com.github.tobato.fastdfs.domain.fdfs.FileInfo;
 import com.github.tobato.fastdfs.domain.fdfs.MetaData;
 import com.github.tobato.fastdfs.domain.fdfs.StorePath;
 import com.github.tobato.fastdfs.exception.FdfsIOException;
@@ -12,18 +13,18 @@ import com.github.tobato.fastdfs.service.AppendFileStorageClient;
 import com.github.tobato.fastdfs.service.FastFileStorageClient;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import java.io.*;
 import java.net.SocketTimeoutException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static com.bilibili.base.ErrorCode.FILE_SERVICE_ERROR;
 import static com.bilibili.constant.MessageConstant.*;
@@ -51,6 +52,9 @@ public class FastDFSUtil {
 
     @Resource
     private FileService fileService;
+
+    @Value("${fdfs.http.storage-addr}")
+    private String httpFdfsStorageAddr;
 
     public static final String DEFAULT_GROUP = "group1";
 
@@ -104,9 +108,9 @@ public class FastDFSUtil {
             throw new BusinessException(FILE_SERVICE_ERROR);
         }
         //检查文件是否上传过
-        if(param.getFilePath() != null) {
+        if (param.getFilePath() != null) {
             String url = (String) stringRedisTemplate.opsForHash().get(FILE_URL_STORAGE, param.getFilePath());
-            if(url != null) {
+            if (url != null) {
                 return url;
             }
         }
@@ -244,5 +248,50 @@ public class FastDFSUtil {
      */
     public void deleteFile(String filePath) {
         fastFileStorageClient.deleteFile(filePath);
+    }
+
+    /**
+     * 在线播放 分片传输
+     *
+     * @param request  请求体
+     * @param response 响应体
+     * @param url      路径
+     */
+    public void viewVideoOnlineBySlices(HttpServletRequest request, HttpServletResponse response, String url) {
+        try {
+            FileInfo fileInfo = fastFileStorageClient.queryFileInfo(DEFAULT_GROUP, url);
+            long fileSize = fileInfo.getFileSize();
+            String path = httpFdfsStorageAddr + url;
+            Enumeration<String> headerNames = request.getHeaderNames();
+            Map<String, Object> headers = new HashMap<>();
+            while (headerNames.hasMoreElements()) {
+                String header = headerNames.nextElement();
+                headers.put(header, request.getHeader(header));
+            }
+            String rangeStr = request.getHeader("Range");
+            String[] range;
+            if (StringUtils.isBlank(rangeStr)) {
+                rangeStr = "bytes=0-" + (fileSize - 1);
+            }
+            range = rangeStr.split("bytes=|-");
+            long begin = 0;
+            if (range.length >= 2) {
+                begin = Long.parseLong(range[1]);
+            }
+            long end = fileSize - 1;
+            if (range.length >= 3) {
+                end = Long.parseLong(range[2]);
+            }
+            long len = end - begin + 1;
+            String contentRange = "bytes" + begin + "-" + end + "/" + fileSize;
+            response.setHeader("Content-Range", contentRange);
+            response.setHeader("Accept-Ranges", "bytes");
+            response.setHeader("Content-Type", "video/mp4");
+            response.setContentLength((int) len);
+            response.setStatus(HttpServletResponse.SC_PARTIAL_CONTENT);
+            HttpUtil.get(path, headers, response);
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
     }
 }

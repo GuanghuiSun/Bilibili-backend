@@ -78,7 +78,14 @@ public interface MessageConstant {
     public static final String FILE_UPLOAD_TIMEOUT_ERROR = "文件上传超时，请重试!";
     public static final String FILE_UPLOAD_ERROR = "文件分片上传失败，请重试!";
     public static final String FILE_NOT_EXIST_ERROR = "文件还未上传";
-    public static final String FILE_MD5_ERROR = "生辰md5错误";
+    public static final String FILE_MD5_ERROR = "生成md5错误";
+    public static final String VIDEO_NOT_EXIST_ERROR = "视频不存在!";
+    public static final String VIDEO_LIKE_REPEAT_ERROR = "请勿重复点赞";
+    public static final String VIDEO_LIKE_NOT_EXIST_ERROR = "点赞不存在";
+    public static final String VIDEO_COLLECT_REPEAT_ERROR = "请勿重复收藏";
+    public static final String VIDEO_COLLECT_NOT_EXIST_ERROR = "收藏不存在";
+    public static final String COLLECT_GROUP_NOT_EXIST_ERROR = "收藏分组不存在";
+    public static final String COINS_INSUFFICIENT_ERROR = "硬币数量不足";
 
 
 

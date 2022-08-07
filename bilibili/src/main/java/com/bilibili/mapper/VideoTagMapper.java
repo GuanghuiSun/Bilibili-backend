@@ -2,6 +2,9 @@ package com.bilibili.mapper;
 
 import com.bilibili.model.domain.VideoTag;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * @author sgh
@@ -10,6 +13,8 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @Entity com.bilibili.model.domain.VideoTag
  */
 public interface VideoTagMapper extends BaseMapper<VideoTag> {
+
+    void batchAddVideoTags(@Param("videoTagList") List<VideoTag> videoTagList);
 
 }
 

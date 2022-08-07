@@ -5,15 +5,29 @@
 <mapper namespace="com.bilibili.mapper.VideoTagMapper">
 
     <resultMap id="BaseResultMap" type="com.bilibili.model.domain.VideoTag">
-            <id property="id" column="id" jdbcType="BIGINT"/>
-            <result property="videoId" column="videoId" jdbcType="BIGINT"/>
-            <result property="tagId" column="tagId" jdbcType="BIGINT"/>
-            <result property="createTime" column="createTime" jdbcType="TIMESTAMP"/>
-            <result property="isDeleted" column="isDeleted" jdbcType="TINYINT"/>
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="videoId" column="videoId" jdbcType="BIGINT"/>
+        <result property="tagId" column="tagId" jdbcType="BIGINT"/>
+        <result property="createTime" column="createTime" jdbcType="TIMESTAMP"/>
+        <result property="isDeleted" column="isDeleted" jdbcType="TINYINT"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,videoId,tagId,
+        id
+        ,videoId,tagId,
         createTime,isDeleted
     </sql>
+    <insert id="batchAddVideoTags" parameterType="java.util.List">
+        insert into
+        t_video_tag(
+        videoId,
+        tagId
+        ) values
+        <foreach collection="videoTagList" item="item" index="index" separator=",">
+            (
+            #{item.videoId},
+            #{item.tagId}
+            )
+        </foreach>
+    </insert>
 </mapper>
