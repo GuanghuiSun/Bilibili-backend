@@ -4,7 +4,6 @@ import com.bilibili.base.BaseResponse;
 import com.bilibili.base.ResultUtils;
 import com.bilibili.exception.BusinessException;
 import com.bilibili.model.domain.FollowingGroup;
-import com.bilibili.model.domain.User;
 import com.bilibili.model.domain.UserFollowing;
 import com.bilibili.service.FollowingGroupService;
 import com.bilibili.service.UserFollowingService;

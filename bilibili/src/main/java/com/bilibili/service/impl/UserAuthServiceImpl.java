@@ -1,7 +1,5 @@
 package com.bilibili.service.impl;
 
-import java.util.ArrayList;
-
 import com.bilibili.model.auth.UserAuthorities;
 import com.bilibili.model.domain.AuthRole;
 import com.bilibili.model.domain.AuthRoleElementOperation;

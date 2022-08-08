@@ -1,7 +1,6 @@
 package com.bilibili.model.upload;
 
 import lombok.Data;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.Serializable;
 

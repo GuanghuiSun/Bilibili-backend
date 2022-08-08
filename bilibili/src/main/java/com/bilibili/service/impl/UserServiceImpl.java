@@ -184,11 +184,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 
     @Override
     public String refreshAccessToken(String refreshToken) throws Exception {
-        if(refreshToken == null) {
+        if (refreshToken == null) {
             throw new BusinessException(PARAM_ERROR_CODE, PARAM_EMPTY_ERROR);
         }
         RefreshToken token = userMapper.getRefreshTokenDetail(refreshToken);
-        if(token == null) {
+        if (token == null) {
             throw new BusinessException(TOKEN_ERROR_CODE, USER_STATUS_ERROR, TOKEN_EXPIRE_ERROR);
         }
         return TokenUtils.generateToken(token.getUserId());

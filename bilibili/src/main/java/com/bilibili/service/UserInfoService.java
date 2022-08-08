@@ -1,6 +1,5 @@
 package com.bilibili.service;
 
-import com.bilibili.model.domain.User;
 import com.bilibili.model.domain.UserInfo;
 import com.baomidou.mybatisplus.extension.service.IService;
 

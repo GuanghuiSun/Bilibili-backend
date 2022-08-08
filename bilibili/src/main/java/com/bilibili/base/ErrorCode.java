@@ -20,9 +20,9 @@ public enum ErrorCode {
     AUTH_ERROR(AUTH_ERROR_CODE, REQUEST_ERROR, REQUEST_AUTH_ERROR),
     FILE_SERVICE_ERROR(FILE_ERROR_CODE, FILE_ERROR, FILE_ERROR);
 
-    private String code;
-    private String message;
-    private String description;
+    private final String code;
+    private final String message;
+    private final String description;
 
     ErrorCode(String code, String message, String description) {
         this.code = code;

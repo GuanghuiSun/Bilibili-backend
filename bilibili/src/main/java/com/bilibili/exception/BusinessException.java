@@ -14,8 +14,8 @@ public class BusinessException extends RuntimeException implements Serializable 
 
     private static final long serialVersionUID = -836387913753259763L;
 
-    private String code;
-    private String description;
+    private final String code;
+    private final String description;
 
     public BusinessException(String message, String code, String description) {
         super(message);

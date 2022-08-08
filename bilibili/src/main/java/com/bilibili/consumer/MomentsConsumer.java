@@ -20,7 +20,7 @@ import static com.bilibili.constant.MessageConstant.MESSAGE_ERROR;
 import static com.bilibili.constant.RedisConstant.SUBSCRIBED_INBOX;
 
 /**
- * kafka消费者
+ * kafka消费者 - 动态
  *
  * @author sgh
  * @date 2022-8-4

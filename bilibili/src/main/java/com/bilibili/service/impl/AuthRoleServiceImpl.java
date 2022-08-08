@@ -2,7 +2,6 @@ package com.bilibili.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.bilibili.base.ErrorCode;
 import com.bilibili.exception.BusinessException;
 import com.bilibili.model.domain.AuthRole;
 import com.bilibili.service.AuthRoleService;

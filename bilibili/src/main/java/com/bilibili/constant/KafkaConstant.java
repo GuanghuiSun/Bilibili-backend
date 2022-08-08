@@ -10,4 +10,8 @@ public interface KafkaConstant {
 
     public static final String MOMENTS_TOPIC = "momentsTopic";
 
+    public static final String BSC_SEND_TOPIC = "bulletScreenCommentsSendTopic";
+
+    public static final String BSC_SAVE_TOPIC = "bulletScreenCommentsSaveTopic";
+
 }

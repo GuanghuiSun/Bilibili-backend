@@ -1,7 +1,6 @@
 package com.bilibili.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.bilibili.exception.BusinessException;
 import com.bilibili.model.domain.FollowingGroup;
