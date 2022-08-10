@@ -76,3 +76,8 @@ fdfs:
   tracker-list: 101.43.234.27:22122
   http:
     storage-addr: http://101.43.234.27:5000/group1/
+
+# elasticsearch
+elasticsearch:
+  host: 101.43.234.27
+  port: 9200

@@ -9,6 +9,7 @@ import com.bilibili.mapper.VideoTagMapper;
 import com.bilibili.model.domain.UserInfo;
 import com.bilibili.model.domain.Video;
 import com.bilibili.model.domain.VideoTag;
+import com.bilibili.service.ElasticSearchService;
 import com.bilibili.service.UserInfoService;
 import com.bilibili.service.VideoService;
 import com.bilibili.mapper.VideoMapper;
@@ -47,6 +48,9 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video>
     @Resource
     private UserInfoService userInfoService;
 
+    @Resource
+    private ElasticSearchService elasticSearchService;
+
     @Override
     public void addVideo(Video video) {
         this.save(video);
@@ -54,6 +58,8 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video>
         List<VideoTag> videoTagList = video.getVideoTagList();
         videoTagList.forEach(item -> item.setVideoId(videoId));
         videoTagMapper.batchAddVideoTags(videoTagList);
+        //添加到es
+        elasticSearchService.addVideo(video);
     }
 
     @Override

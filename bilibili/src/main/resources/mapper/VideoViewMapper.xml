@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bilibili.mapper.VideoViewMapper">
+
+    <resultMap id="BaseResultMap" type="com.bilibili.model.domain.VideoView">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="videoId" column="videoId" jdbcType="BIGINT"/>
+            <result property="userId" column="userId" jdbcType="BIGINT"/>
+            <result property="clientId" column="clientId" jdbcType="VARCHAR"/>
+            <result property="ip" column="ip" jdbcType="VARCHAR"/>
+            <result property="createTime" column="createTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,videoId,userId,
+        clientId,ip,createTime
+    </sql>
+    <select id="getVideoView" resultType="com.bilibili.model.domain.VideoView">
+        select *
+        from t_video_view
+        where videoId = #{videoId}
+            <if test="userId == null and clientId != null">
+                and clientId = #{clientId} and userId is null
+            </if>
+            <if test="userId != null">
+                and userId = #{userId}
+            </if>
+            <if test="ip != null and ip != ''">
+                and ip = #{ip}
+            </if>
+            <if test="today != null and today != ''">
+                and DATE_FORMAT(createTime, '%Y-%m-%d') = #{today}
+            </if>
+    </select>
+</mapper>

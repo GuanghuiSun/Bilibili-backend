@@ -4,14 +4,11 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.bilibili.base.BaseResponse;
 import com.bilibili.base.ResultUtils;
 import com.bilibili.exception.BusinessException;
-import com.bilibili.model.domain.Video;
-import com.bilibili.model.domain.VideoCoin;
-import com.bilibili.model.domain.VideoCollection;
+import com.bilibili.model.domain.*;
 import com.bilibili.model.request.VideoCommentsPageRequest;
 import com.bilibili.model.request.VideoPageByAreaRequest;
 import com.bilibili.service.*;
 import com.bilibili.support.UserSupport;
-import com.bilibili.model.domain.VideoComment;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +17,9 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import static com.bilibili.base.ErrorCode.PARAM_ERROR;
@@ -49,6 +49,12 @@ public class VideoController {
 
     @Resource
     private VideoCommentService videoCommentService;
+
+    @Resource
+    private ElasticSearchService elasticSearchService;
+
+    @Resource
+    private VideoViewService videoViewService;
 
     /**
      * 视频投稿
@@ -295,5 +301,83 @@ public class VideoController {
         }
         Map<String, Object> result = videoService.getVideoDetails(videoId);
         return ResultUtils.success(result);
+    }
+
+    /**
+     * es测试-获取相关视频
+     *
+     * @param keyWord 关键词
+     * @return 相关视频
+     */
+    @GetMapping("/search")
+    public BaseResponse<Video> getEsVideos(@RequestParam String keyWord) {
+        if (keyWord == null) {
+            throw new BusinessException(PARAM_ERROR);
+        }
+        Video video = elasticSearchService.getVideos(keyWord);
+        return ResultUtils.success(video);
+    }
+
+    /**
+     * 根据关键字获取相关信息
+     *
+     * @param keyWord     关键字
+     * @param currentPage 当前页
+     * @param pageSize    页面大小
+     * @return 结果集
+     */
+    @GetMapping("/contents")
+    public BaseResponse<List<Map<String, Object>>> getContents(@RequestParam String keyWord,
+                                                               @RequestParam Integer currentPage,
+                                                               @RequestParam Integer pageSize) {
+        if (StringUtils.isBlank(keyWord) || currentPage == null || pageSize == null) {
+            throw new BusinessException(PARAM_ERROR);
+        }
+        try {
+            List<Map<String, Object>> result = elasticSearchService.getContents(keyWord, currentPage, pageSize);
+            return ResultUtils.success(result);
+        } catch (IOException e) {
+            log.error(e.getMessage());
+            e.printStackTrace();
+        }
+        return ResultUtils.success(Collections.emptyList());
+    }
+
+    /**
+     * 增加观看记录
+     *
+     * @param videoView 观看记录
+     * @param request   请求体
+     * @return 成功响应
+     */
+    @PostMapping("/view")
+    public BaseResponse<Boolean> addVideoView(@RequestBody VideoView videoView, HttpServletRequest request) {
+        if (videoView == null) {
+            throw new BusinessException(PARAM_ERROR);
+        }
+        Long userId = null;
+        try {
+            userId = userSupport.getCurrentUserId();
+            videoView.setUserId(userId);
+            videoViewService.addVideoView(videoView, request);
+        } catch (Exception e) {
+            videoViewService.addVideoView(videoView, request);
+        }
+        return ResultUtils.success(Boolean.TRUE);
+    }
+
+    /**
+     * 查询播放量
+     *
+     * @param videoId 视频id
+     * @return 播放量
+     */
+    @GetMapping("/view-count")
+    public BaseResponse<Long> getVideoViewCounts(@RequestParam Long videoId) {
+        if (videoId == null) {
+            throw new BusinessException(PARAM_ERROR);
+        }
+        Long count = videoViewService.getVideoViewCounts(videoId);
+        return ResultUtils.success(count);
     }
 }

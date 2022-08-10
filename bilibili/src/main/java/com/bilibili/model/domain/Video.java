@@ -10,6 +10,10 @@ import java.util.Date;
 import java.util.List;
 
 import lombok.Data;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldType;
 
 /**
  * 视频投稿记录表
@@ -18,23 +22,28 @@ import lombok.Data;
  */
 @TableName(value = "t_video")
 @Data
+@Document(indexName = "videos")
 public class Video implements Serializable {
     /**
      * 主键id
+     * es主键
      */
     @TableId(value = "id", type = IdType.AUTO)
+    @Id
     private Long id;
 
     /**
      * 用户id
      */
     @TableField(value = "userId")
+    @Field(type = FieldType.Long)
     private Long userId;
 
     /**
      * 视频链接
      */
     @TableField(value = "url")
+    @Field(type = FieldType.Text)
     private String url;
 
     /**
@@ -47,6 +56,7 @@ public class Video implements Serializable {
      * 视频标题
      */
     @TableField(value = "title")
+    @Field(type = FieldType.Text)
     private String title;
 
     /**
@@ -77,18 +87,21 @@ public class Video implements Serializable {
      * 视频简介
      */
     @TableField(value = "description")
+    @Field(type = FieldType.Text)
     private String description;
 
     /**
      * 创建时间
      */
     @TableField(value = "createTime")
+    @Field(type = FieldType.Date)
     private Date createTime;
 
     /**
      * 更新时间
      */
     @TableField(value = "updateTime")
+    @Field(type = FieldType.Date)
     private Date updateTime;
 
     /**
