@@ -30,9 +30,6 @@ public class UserSupport {
         if (requestAttributes != null) {
             token = requestAttributes.getRequest().getHeader("token");
         }
-//        log.debug(token);
-//        log.debug(String.valueOf(requestAttributes.getRequest()));
-//        System.out.println(token);
         Long userId = TokenUtils.verifyToken(token);
         if (userId < 0) {
             throw new BusinessException(GET_SERVICE_ERROR, TOKEN_DECODE_ERROR);

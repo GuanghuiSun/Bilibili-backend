@@ -17,9 +17,9 @@ spring:
       timeBetweenEvictionRunsMillis: 60000
       minEvictableIdleTimeMillis: 30000
   redis:
-    host: 101.43.234.27
+    host:
     port: 6379
-    password: guanghui521.
+    password:
     lettuce:
       pool:
         max-active: 10
@@ -27,7 +27,7 @@ spring:
         min-idle: 1
         time-between-eviction-runs: 10s
   kafka:
-    bootstrap-servers: 101.43.234.27:9092
+    bootstrap-servers:
     producer: # 生产者
       retries: 3  #发送失败重试次数
       acks: all  #所有分区副本确认后，才算消息发送成功
@@ -73,11 +73,11 @@ logging:
 
 # fastDFS
 fdfs:
-  tracker-list: 101.43.234.27:22122
+  tracker-list:
   http:
-    storage-addr: http://101.43.234.27:5000/group1/
+    storage-addr:
 
 # elasticsearch
 elasticsearch:
-  host: 101.43.234.27
+  host:
   port: 9200

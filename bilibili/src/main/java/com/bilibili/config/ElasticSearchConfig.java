@@ -11,6 +11,9 @@ import org.springframework.data.elasticsearch.config.AbstractElasticsearchConfig
 
 /**
  * elasticSearch配置类
+ *
+ * @author sgh
+ * @date 2022-8-10
  */
 @Configuration
 public class ElasticSearchConfig extends AbstractElasticsearchConfiguration {

@@ -149,7 +149,8 @@ public class WebSocketService {
 
     @OnError
     public void onError(Throwable error) {
-
+        logger.error(error.getMessage());
+        error.printStackTrace();
     }
 
     /**

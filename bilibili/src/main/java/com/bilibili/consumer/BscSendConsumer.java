@@ -1,10 +1,7 @@
 package com.bilibili.consumer;
 
-import cn.hutool.json.JSONUtil;
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.bilibili.exception.BusinessException;
-import com.bilibili.model.domain.BulletScreenComments;
 import com.bilibili.websocket.WebSocketService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -20,6 +17,8 @@ import static com.bilibili.constant.MessageConstant.MESSAGE_ERROR;
 
 /**
  * kafka消费者 - 弹幕发送
+ *
+ * @author sgh
  */
 @Component
 @Slf4j

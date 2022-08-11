@@ -355,7 +355,7 @@ public class VideoController {
         if (videoView == null) {
             throw new BusinessException(PARAM_ERROR);
         }
-        Long userId = null;
+        Long userId ;
         try {
             userId = userSupport.getCurrentUserId();
             videoView.setUserId(userId);
